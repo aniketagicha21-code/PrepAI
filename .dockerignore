@@ -1,0 +1,11 @@
+# Used when dockerContext is repository root (Render + `docker build -f backend/Dockerfile .`)
+.git
+frontend/node_modules
+frontend/dist
+**/.venv
+**/__pycache__
+**/*.py[cod]
+**/.env
+**/.env.*
+**/.pytest_cache
+**/.mypy_cache

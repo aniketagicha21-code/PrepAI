@@ -3,7 +3,8 @@ services:
     name: prepai-api
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    # Repo root so COPY backend/... in Dockerfile resolves (matches Render’s default context)
+    dockerContext: .
     envVars:
       - key: DATABASE_URL
         sync: false
