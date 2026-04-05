@@ -1,8 +1,9 @@
-fastapi==0.115.6
-uvicorn[standard]==0.32.1
-sqlalchemy==2.0.36
+# Pinned for Python 3.12 + prebuilt wheels on Render (manylinux)
+fastapi==0.115.12
+uvicorn[standard]==0.34.0
+sqlalchemy==2.0.40
 psycopg2-binary==2.9.10
-pydantic==2.10.4
-pydantic-settings==2.6.1
-openai==1.57.4
+pydantic==2.11.7
+pydantic-settings==2.8.1
+openai==1.68.2
 python-multipart==0.0.20
