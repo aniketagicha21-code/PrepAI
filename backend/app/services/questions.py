@@ -1,11 +1,8 @@
 import json
 
-from openai import OpenAI
-
 from app.config import settings
+from app.openai_client import openai_client
 from app.schemas import InterviewType, QuestionItem, Role
-
-client = OpenAI(api_key=settings.openai_api_key)
 
 ROLE_LABELS: dict[Role, str] = {
     "swe": "Software Engineer (general algorithms, systems, coding practices)",
@@ -35,7 +32,7 @@ def generate_questions(interview_type: InterviewType, role: Role) -> list[Questi
         'Return JSON: {"questions": ["q1","q2","q3","q4","q5"]} '
         "Each string is one complete question ending with ?"
     )
-    completion = client.chat.completions.create(
+    completion = openai_client.chat.completions.create(
         model=settings.openai_model,
         response_format={"type": "json_object"},
         messages=[
@@ -77,7 +74,7 @@ def score_answer(question_text: str, transcript: str, filler_count: int, length_
         f"Transcript:\n{transcript}\n\n"
         f"(For your context only — measured programmatically: filler_word_count={filler_count}, answer_length_words={length_words})"
     )
-    completion = client.chat.completions.create(
+    completion = openai_client.chat.completions.create(
         model=settings.openai_model,
         response_format={"type": "json_object"},
         messages=[

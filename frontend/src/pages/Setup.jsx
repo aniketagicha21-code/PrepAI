@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createSession } from "../api/client.js";
+import { createSession, pingHealth } from "../api/client.js";
 import { useInView } from "../hooks/useInView.js";
 
 const INTERVIEW_TYPES = [
@@ -34,13 +34,25 @@ export default function Setup() {
   const [interviewType, setInterviewType] = useState("technical");
   const [role, setRole] = useState("swe");
   const [loading, setLoading] = useState(false);
+  const [phase, setPhase] = useState(null);
   const [error, setError] = useState(null);
   const [headRef, headVis] = useInView();
 
+  const isRemote =
+    typeof window !== "undefined" &&
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1";
+
   async function handleStart() {
     setLoading(true);
+    setPhase(null);
     setError(null);
     try {
+      if (isRemote) {
+        setPhase("wake");
+        await pingHealth();
+      }
+      setPhase("generate");
       const data = await createSession({ interview_type: interviewType, role });
       navigate(`/interview/${data.session_id}`, {
         state: { questions: data.questions, interview_type: data.interview_type, role: data.role },
@@ -49,8 +61,16 @@ export default function Setup() {
       setError(e.message || "Failed to start session");
     } finally {
       setLoading(false);
+      setPhase(null);
     }
   }
+
+  const loadingLabel =
+    phase === "wake"
+      ? "Connecting to server… (first load after idle can take up to ~1–2 min on free hosting)"
+      : phase === "generate"
+        ? "Generating questions with GPT-4…"
+        : "Generating questions…";
 
   return (
     <div className="mx-auto max-w-3xl space-y-10">
@@ -128,7 +148,7 @@ export default function Setup() {
         onClick={handleStart}
         className="w-full rounded-xl bg-accent py-3.5 text-sm font-bold text-white shadow-lift transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-10"
       >
-        {loading ? "Generating questions…" : "Generate questions"}
+        {loading ? loadingLabel : "Generate questions"}
       </button>
     </div>
   );

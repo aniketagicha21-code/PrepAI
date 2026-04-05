@@ -1,10 +1,7 @@
 import json
 
-from openai import OpenAI
-
 from app.config import settings
-
-client = OpenAI(api_key=settings.openai_api_key)
+from app.openai_client import openai_client
 
 
 def generate_improvement_tips(
@@ -27,7 +24,7 @@ def generate_improvement_tips(
         "Focus on patterns across answers, not repeating per-question notes."
     )
     user = f"Interview type: {interview_type}\nRole focus: {role}\n\nSession answers:\n{blob}"
-    completion = client.chat.completions.create(
+    completion = openai_client.chat.completions.create(
         model=settings.openai_model,
         response_format={"type": "json_object"},
         messages=[

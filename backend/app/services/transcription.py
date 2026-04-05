@@ -1,16 +1,13 @@
 from io import BytesIO
 
-from openai import OpenAI
-
 from app.config import settings
-
-client = OpenAI(api_key=settings.openai_api_key)
+from app.openai_client import openai_client
 
 
 def transcribe_audio_bytes(data: bytes, filename: str) -> str:
     bio = BytesIO(data)
     bio.name = filename or "audio.webm"
-    tr = client.audio.transcriptions.create(
+    tr = openai_client.audio.transcriptions.create(
         model=settings.whisper_model,
         file=bio,
         response_format="text",
