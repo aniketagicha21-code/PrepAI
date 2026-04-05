@@ -60,32 +60,33 @@ Open [http://localhost:5173](http://localhost:5173). Allow microphone access whe
 | `OPENAI_API_KEY` | Yes | OpenAI secret key. |
 | `OPENAI_MODEL` | No | Chat model for questions + scoring (default `gpt-4o`). |
 | `WHISPER_MODEL` | No | Default `whisper-1`. |
-| `CORS_ORIGINS` | No | Comma-separated allowed browser origins. Example: `http://localhost:5173,https://your-app.vercel.app` |
+| `CORS_ORIGINS` | No | Comma-separated allowed browser origins (**no trailing slashes**). Example: `http://localhost:5173,https://prep-ai-sepia-iota.vercel.app` |
 
 ### Frontend (Vercel / `frontend/.env.local`)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `VITE_API_URL` | For production | Full origin of the API **without** trailing slash, e.g. `https://prepai-api.onrender.com`. Empty string = same-origin or dev proxy. |
+| `VITE_API_URL` | For production | Render API origin **without** trailing slash, e.g. `https://prepai-iru2.onrender.com`. Empty = dev proxy. Repo includes `frontend/.env.production` for builds. |
 
 ## Deploy
 
-### Backend — Render
+### Backend — Render (Docker)
 
-1. Create a **PostgreSQL** instance on Render; copy its **Internal Database URL** (or external if needed).
-2. New **Web Service** → connect this repo; set **Root Directory** to `backend`.
-3. **Build command:** `pip install -r requirements.txt`
-4. **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-5. Environment: `DATABASE_URL`, `OPENAI_API_KEY`, `CORS_ORIGINS` (your Vercel URL + optional preview URLs).
+1. Create a **PostgreSQL** instance; copy its **Internal Database URL**.
+2. **Web Service** → Docker; **Dockerfile Path** `Dockerfile`; **Context** `.` (repo root).
+3. In **Environment**, set at least:
+   - `DATABASE_URL`
+   - `OPENAI_API_KEY`
+   - `CORS_ORIGINS` — must include your Vercel origin exactly, e.g. `http://localhost:5173,https://prep-ai-sepia-iota.vercel.app` (comma-separated, **no trailing slash** on URLs).
 
-Optional: use the included `render.yaml` from the Render Blueprint flow.
+Optional: deploy from the included `render.yaml` Blueprint.
 
 ### Frontend — Vercel
 
 1. Import the repo; set **Root Directory** to `frontend`.
 2. Framework preset: **Vite**.
-3. Add environment variable `VITE_API_URL` = your Render service URL (no trailing slash).
-4. Deploy.
+3. Set `VITE_API_URL` = `https://prepai-iru2.onrender.com` (no trailing slash), or rely on committed `frontend/.env.production`.
+4. Redeploy after env changes so the client bundle picks up the API URL.
 
 ## Push to GitHub (`github.com/aniketagicha21-codex/PrepAI`)
 
