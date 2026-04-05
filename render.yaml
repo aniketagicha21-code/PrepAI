@@ -1,13 +1,10 @@
 services:
   - type: web
     name: prepai-api
-    runtime: python
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     envVars:
-      - key: PYTHON_VERSION
-        value: "3.12.7"
       - key: DATABASE_URL
         sync: false
       - key: OPENAI_API_KEY
