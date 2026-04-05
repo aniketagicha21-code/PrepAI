@@ -1,4 +1,22 @@
-const RAW_BASE = import.meta.env.VITE_API_URL ?? "";
+/** Production Render API (fallback if VITE_API_URL missing from bundle). */
+const PRODUCTION_API_FALLBACK = "https://prepai-iru2.onrender.com";
+
+function normalizeBase(url) {
+  if (url == null || String(url).trim() === "") return "";
+  return String(url).trim().replace(/\/+$/, "");
+}
+
+function resolveApiBase() {
+  const fromEnv = normalizeBase(import.meta.env.VITE_API_URL);
+  if (fromEnv) return fromEnv;
+  // Vercel builds sometimes omit .env.production; same-origin /api/* is rewritten to HTML → "Load failed"
+  if (typeof window !== "undefined" && /\.vercel\.app$/i.test(window.location.hostname)) {
+    return PRODUCTION_API_FALLBACK;
+  }
+  return "";
+}
+
+const RAW_BASE = resolveApiBase();
 
 export function apiUrl(path) {
   if (!path.startsWith("/")) {

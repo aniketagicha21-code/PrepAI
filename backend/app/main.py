@@ -19,7 +19,10 @@ app = FastAPI(title="PrepAI API", version="1.0.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_cors_origins(),
-    allow_credentials=True,
+    # Any *.vercel.app (production + preview) without listing each URL in env
+    allow_origin_regex=r"https://.*\.vercel\.app$",
+    # Matches default fetch() (no credentials); avoids CORS edge cases with credentials
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
