@@ -1,4 +1,4 @@
-# Used when dockerContext is repository root (Render + `docker build -f backend/Dockerfile .`)
+# Used when dockerContext is repository root (Render + `docker build .` from repo root)
 .git
 frontend/node_modules
 frontend/dist

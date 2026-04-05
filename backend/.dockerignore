@@ -1,5 +1,5 @@
-# Used only if you build with context=backend (e.g. cd backend && docker build .).
-# Render uses repo-root context; see /.dockerignore
+# Optional for local `docker build` with context=backend only.
+# Production: use repo-root Dockerfile and /.dockerignore
 .venv
 venv
 __pycache__
